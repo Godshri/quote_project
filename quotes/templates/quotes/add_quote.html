@@ -1,0 +1,21 @@
+{% extends 'quotes/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h2>Добавить новую цитату</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                    <a href="{% url 'add_source' %}" class="btn btn-secondary">Добавить новый источник</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

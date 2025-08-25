@@ -1,0 +1,65 @@
+{% extends 'quotes/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Статистика</h2>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Всего цитат</div>
+                    <div class="card-body">
+                        <h4 class="card-title">{{ stats.total_quotes }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Всего источников</div>
+                    <div class="card-body">
+                        <h4 class="card-title">{{ stats.total_sources }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-header">Всего просмотров</div>
+                    <div class="card-body">
+                        <h4 class="card-title">{{ stats.total_views }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-header">Всего лайков</div>
+                    <div class="card-body">
+                        <h4 class="card-title">{{ stats.total_likes }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if stats.most_popular %}
+        <div class="card">
+            <div class="card-header">
+                <h3>Самая популярная цитата</h3>
+            </div>
+            <div class="card-body">
+                <blockquote class="blockquote">
+                    <p>{{ stats.most_popular.text }}</p>
+                    <footer class="blockquote-footer">
+                        {{ stats.most_popular.source }}
+                    </footer>
+                </blockquote>
+                <div class="text-muted">
+                    👍 {{ stats.most_popular.likes }} | 👎 {{ stats.most_popular.dislikes }} | 
+                    Просмотров: {{ stats.most_popular.views }} | 
+                    Рейтинг: {{ stats.most_popular.likes|add:stats.most_popular.dislikes }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'quotes/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>10 самых популярных цитат</h2>
+        
+        {% for quote in quotes %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <blockquote class="blockquote">
+                    <p>{{ quote.text }}</p>
+                    <footer class="blockquote-footer">
+                        {{ quote.source }}
+                    </footer>
+                </blockquote>
+                
+                <div class="text-muted">
+                    👍 {{ quote.likes }} | 👎 {{ quote.dislikes }} | 
+                    Просмотров: {{ quote.views }} | Рейтинг: {{ quote.likes|add:quote.dislikes|default:0 }}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Пока нет цитат с оценками.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
