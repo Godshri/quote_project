@@ -7,11 +7,13 @@ class Source(models.Model):
         ('movie', 'Фильм'),
         ('book', 'Книга'),
         ('series', 'Сериал'),
+        ('game', 'Игра'),
+        ('person', 'Люди'),
         ('other', 'Другое'),
     ]
     
     name = models.CharField(max_length=200, verbose_name="Название")
-    type = models.CharField(max_length=10, choices=TYPE_CHOICES, verbose_name="Тип")
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES, verbose_name="Тип")
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

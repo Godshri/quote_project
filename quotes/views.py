@@ -6,22 +6,27 @@ import random
 from .models import Quote, Source
 from .forms import QuoteForm, SourceForm
 
+
 def random_quote(request):
-    # Получаем случайную цитату с учетом веса
     total_weight = Quote.objects.aggregate(total=Sum('weight'))['total'] or 0
-    if total_weight > 0:
+    
+    if total_weight <= 0:
+        selected_quote = None
+    else:
         random_weight = random.uniform(0, total_weight)
         current = 0
-        quotes = Quote.objects.all()
+        
+        quotes = Quote.objects.order_by('-weight')
+        
         for quote in quotes:
             current += quote.weight
             if current >= random_weight:
                 selected_quote = quote
                 break
-    else:
-        selected_quote = None
+        else:
+            
+            selected_quote = quotes.last()
     
-    # Увеличиваем счетчик просмотров
     if selected_quote:
         selected_quote.views += 1
         selected_quote.save()
