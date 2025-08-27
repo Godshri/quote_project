@@ -1,65 +1,108 @@
 {% extends 'quotes/base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h2>Статистика</h2>
-        
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card text-white bg-primary mb-3">
-                    <div class="card-header">Всего цитат</div>
-                    <div class="card-body">
-                        <h4 class="card-title">{{ stats.total_quotes }}</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-success mb-3">
-                    <div class="card-header">Всего источников</div>
-                    <div class="card-body">
-                        <h4 class="card-title">{{ stats.total_sources }}</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-info mb-3">
-                    <div class="card-header">Всего просмотров</div>
-                    <div class="card-body">
-                        <h4 class="card-title">{{ stats.total_views }}</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-warning mb-3">
-                    <div class="card-header">Всего лайков</div>
-                    <div class="card-body">
-                        <h4 class="card-title">{{ stats.total_likes }}</h4>
-                    </div>
-                </div>
-            </div>
+<div class="quote-container">
+    <div class="quote-card fade-in">
+        <div class="card-header text-center">
+            <h2><i class="fas fa-chart-bar"></i> Статистика</h2>
+            <p class="mb-0">Аналитика и метрики коллекции цитат</p>
         </div>
+        <div class="card-body">
 
-        {% if stats.most_popular %}
-        <div class="card">
-            <div class="card-header">
-                <h3>Самая популярная цитата</h3>
-            </div>
-            <div class="card-body">
-                <blockquote class="blockquote">
-                    <p>{{ stats.most_popular.text }}</p>
-                    <footer class="blockquote-footer">
-                        {{ stats.most_popular.source }}
-                    </footer>
-                </blockquote>
-                <div class="text-muted">
-                    👍 {{ stats.most_popular.likes }} | 👎 {{ stats.most_popular.dislikes }} | 
-                    Просмотров: {{ stats.most_popular.views }} | 
-                    Рейтинг: {{ stats.most_popular.likes|add:stats.most_popular.dislikes }}
+            <div class="stats-grid">
+                <div class="stat-card stat-card-primary">
+                    <div class="stats-icon">
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ stats.total_quotes }}</h3>
+                        <p>Всего цитат</p>
+                    </div>
+                    <div class="stats-badge">📊</div>
+                </div>
+
+                <div class="stat-card stat-card-success">
+                    <div class="stats-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ stats.total_sources }}</h3>
+                        <p>Всего источников</p>
+                    </div>
+                    <div class="stats-badge">📚</div>
+                </div>
+
+                <div class="stat-card stat-card-info">
+                    <div class="stats-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ stats.total_views }}</h3>
+                        <p>Всего просмотров</p>
+                    </div>
+                    <div class="stats-badge">👀</div>
+                </div>
+
+                <div class="stat-card stat-card-warning">
+                    <div class="stats-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ stats.total_likes }}</h3>
+                        <p>Всего лайков</p>
+                    </div>
+                    <div class="stats-badge">❤️</div>
                 </div>
             </div>
+
+            {% if stats.most_popular %}
+            <div class="popular-quote fade-in" style="animation-delay: 0.3s">
+                <div class="section-header">
+                    <h3><i class="fas fa-crown"></i> Самая популярная цитата</h3>
+                    <div class="trophy-badge">🏆</div>
+                </div>
+                
+                <div class="quote-item featured">
+                    <div class="quote-content">
+                        <div class="quote-text">
+                            <i class="fas fa-quote-left quote-icon"></i>
+                            <p>{{ stats.most_popular.text }}</p>
+                        </div>
+                        <div class="quote-source">
+                            <i class="fas fa-book"></i>
+                            {{ stats.most_popular.source }}
+                        </div>
+                    </div>
+                    
+                    <div class="quote-stats">
+                        <div class="stats-mini-grid">
+                            <div class="stats-mini">
+                                <span class="stats-mini-icon">👍</span>
+                                <span class="stats-mini-value">{{ stats.most_popular.likes }}</span>
+                            </div>
+                            <div class="stats-mini">
+                                <span class="stats-mini-icon">👎</span>
+                                <span class="stats-mini-value">{{ stats.most_popular.dislikes }}</span>
+                            </div>
+                            <div class="stats-mini">
+                                <span class="stats-mini-icon"><i class="fas fa-eye"></i></span>
+                                <span class="stats-mini-value">{{ stats.most_popular.views }}</span>
+                            </div>
+                            <div class="stats-mini">
+                                <span class="stats-mini-icon"><i class="fas fa-star"></i></span>
+                                <span class="stats-mini-value">{{ stats.most_popular.likes|add:stats.most_popular.dislikes }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="featured-badge">
+                        <i class="fas fa-fire"></i>
+                        Лидер рейтинга
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 </div>
-{% endblock %}
+{% endblock%}

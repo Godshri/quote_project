@@ -1,42 +1,37 @@
 {% extends 'quotes/base.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h2>Случайная цитата</h2>
-            </div>
-            <div class="card-body">
-                {% if quote %}
-                    <blockquote class="blockquote">
-                        <p>{{ quote.text }}</p>
-                        <footer class="blockquote-footer">
-                            {{ quote.source }}
-                        </footer>
-                    </blockquote>
-                    
-                    <div class="mt-3">
-                        <button onclick="rateQuote({{ quote.id }}, 'like')" class="btn btn-success">
-                            👍 <span id="likes-{{ quote.id }}">{{ quote.likes }}</span>
-                        </button>
-                        <button onclick="rateQuote({{ quote.id }}, 'dislike')" class="btn btn-danger">
-                            👎 <span id="dislikes-{{ quote.id }}">{{ quote.dislikes }}</span>
-                        </button>
-                    </div>
-                    
-                    <div class="mt-3 text-muted">
-                        Просмотров: {{ quote.views }} | Вес: {{ quote.weight }}
-                    </div>
-                {% else %}
-                    <p>Цитат пока нет. <a href="{% url 'add_quote' %}">Добавьте первую!</a></p>
-                {% endif %}
-            </div>
+<div class="quote-container">
+    <div class="quote-card fade-in">
+        <div class="card-body text-center">
+            {% if quote %}
+                <blockquote class="blockquote">
+                    <p class="mb-4">"{{ quote.text }}"</p> 
+                    <footer class="blockquote-footer mt-3">
+                        {{ quote.source }}
+                    </footer>
+                </blockquote>
+                
+                <div class="rating-buttons mt-4">  
+                    <button onclick="rateQuote({{ quote.id }}, 'like')" class="btn btn-success">
+                        👍 <span id="likes-{{ quote.id }}">{{ quote.likes }}</span>
+                    </button>
+                    <button onclick="rateQuote({{ quote.id }}, 'dislike')" class="btn btn-danger">
+                        👎 <span id="dislikes-{{ quote.id }}">{{ quote.dislikes }}</span>
+                    </button>
+                </div>
+                
+                <div class="quote-stats mt-4">  
+                    Просмотров: {{ quote.views }} | Вес: {{ quote.weight }}
+                </div>
+            {% else %}
+                <p class="no-quotes">Цитат пока нет. <a href="{% url 'add_quote' %}">Добавьте первую!</a></p>
+            {% endif %}
         </div>
-        
-        <div class="mt-3 text-center">
-            <a href="{% url 'random_quote' %}" class="btn btn-primary">Следующая цитата</a>
-        </div>
+    </div>
+    
+    <div class="next-quote mt-4"> 
+        <a href="{% url 'random_quote' %}" class="btn btn-primary btn-lg">Следующая цитата</a> 
     </div>
 </div>
 
@@ -56,4 +51,5 @@ function rateQuote(quoteId, action) {
     });
 }
 </script>
+
 {% endblock %}

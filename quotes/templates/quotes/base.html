@@ -4,26 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Случайные цитаты{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'quotes/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'random_quote' %}">Случайные цитаты</a>
-            <div class="navbar-nav">
-                <a class="nav-link" href="{% url 'random_quote' %}">Главная</a>
-                <a class="nav-link" href="{% url 'add_quote' %}">Добавить цитату</a>
-                <a class="nav-link" href="{% url 'popular_quotes' %}">Популярные</a>
-                <a class="nav-link" href="{% url 'dashboard' %}">Статистика</a>
-            </div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a class="navbar-brand" href="{% url 'random_quote' %}">
+                <i class="fas fa-quote-left"></i><span>Случайные цитаты</span>
+            </a>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item {% if request.resolver_match.url_name == 'random_quote' %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'random_quote' %}">
+                        <i class="fas fa-home"></i><span>Главная</span>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'add_quote' %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'add_quote' %}">
+                        <i class="fas fa-plus-circle"></i><span>Добавить</span>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'popular_quotes' %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'popular_quotes' %}">
+                        <i class="fas fa-fire"></i><span>Популярные</span>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'dashboard' %}">
+                        <i class="fas fa-chart-bar"></i><span>Статистика</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </nav>
-    
-    <div class="container mt-4">
-        {% block content %}{% endblock %}
+
+      <div class="container mt-4">
+        
+         <!-- Глобальные сообщения -->
+         {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+       
+
+        {% block content %}
+        {% endblock %}
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     {% block scripts %}{% endblock %}
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 10) {
+                navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+                navbar.style.background = 'linear-gradient(135deg, #3a5a80 0%, #2a4a70 100%)';
+            } else {
+                navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.15)';
+                navbar.style.background = 'linear-gradient(135deg, #4a6fa5 0%, #3a5a80 100%)';
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUrl = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkUrl = link.getAttribute('href');
+                if (currentUrl === linkUrl) {
+                    link.classList.add('active');
+                    link.parentElement.classList.add('active');
+                }
+            });
+        });
+    </script>
+    <script>
+        // Автоматическое скрытие сообщений через 5 секунд
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
 </body>
 </html>

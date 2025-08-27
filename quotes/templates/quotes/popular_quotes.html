@@ -1,29 +1,66 @@
 {% extends 'quotes/base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h2>10 самых популярных цитат</h2>
-        
-        {% for quote in quotes %}
-        <div class="card mb-3">
-            <div class="card-body">
-                <blockquote class="blockquote">
-                    <p>{{ quote.text }}</p>
-                    <footer class="blockquote-footer">
-                        {{ quote.source }}
-                    </footer>
-                </blockquote>
-                
-                <div class="text-muted">
-                    👍 {{ quote.likes }} | 👎 {{ quote.dislikes }} | 
-                    Просмотров: {{ quote.views }} | Рейтинг: {{ quote.likes|add:quote.dislikes|default:0 }}
-                </div>
-            </div>
+<div class="quote-container">
+    <div class="quote-card fade-in">
+        <div class="card-header text-center">
+            <h2><i class="fas fa-trophy"></i> Топ-10 самых популярных цитат</h2>
+            <p class="mb-0">Самые вдохновляющие цитаты по мнению сообщества</p>
         </div>
-        {% empty %}
-        <p>Пока нет цитат с оценками.</p>
-        {% endfor %}
+        <div class="card-body">
+            {% for quote in quotes %}
+            <div class="quote-item fade-in" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+                <div class="quote-content">
+                    <div class="quote-text">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p>{{ quote.text }}</p>
+                    </div>
+                    <div class="quote-source">
+                        <i class="fas fa-book"></i>
+                        {{ quote.source }}
+                    </div>
+                </div>
+                
+                <div class="quote-stats">
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <span class="stat-icon">👍</span>
+                            <span class="stat-value">{{ quote.likes }}</span>
+                            <span class="stat-label">Лайков</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">👎</span>
+                            <span class="stat-value">{{ quote.dislikes }}</span>
+                            <span class="stat-label">Дизлайков</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon"><i class="fas fa-eye"></i></span>
+                            <span class="stat-value">{{ quote.views }}</span>
+                            <span class="stat-label">Просмотров</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon"><i class="fas fa-chart-line"></i></span>
+                            <span class="stat-value">{{ quote.likes|add:quote.dislikes|default:0 }}</span>
+                            <span class="stat-label">Рейтинг</span>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if forloop.counter <= 3 %}
+                <div class="quote-badge">
+                    <i class="fas fa-medal"></i>
+                    {{ forloop.counter }} место
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="no-quotes text-center">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <h4>Пока нет цитат с оценками</h4>
+                <p>Будьте первым, кто оценит цитаты!</p>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

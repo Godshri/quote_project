@@ -23,6 +23,10 @@ class Source(models.Model):
         return f"{self.get_type_display()}: {self.name}"
     
     def clean(self):
+        # Проверяем уникальность (дублирует unique_together, но дает лучшее сообщение)
+        if Source.objects.filter(name=self.name, type=self.type).exclude(pk=self.pk).exists():
+            raise ValidationError('Источник с таким названием и типом уже существует')
+        
         # Проверяем, что у источника не больше 3 цитат
         if self.pk:  # только для существующих объектов
             if self.quote_set.count() >= 3:

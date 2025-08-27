@@ -115,10 +115,11 @@ def dislike_quote(request, quote_id):
     if not can_user_vote(request, quote_id):
         return JsonResponse({
             'success': False, 
-            'error': 'Вы уже голосовали за эту цитату или не просматривали её',
+            'error': 'Вы уже голосовали за эту цитату',
             'likes': quote.likes, 
             'dislikes': quote.dislikes
         })
+        
     
     quote.dislikes += 1
     quote.save()
@@ -169,29 +170,42 @@ def add_quote(request):
         form = QuoteForm(request.POST)
         if form.is_valid():
             quote = form.save(commit=False)
-
             quote.weight = 1
             quote.save()
             messages.success(request, 'Цитата успешно добавлена!')
             return redirect('random_quote')
+        else:
+            # Добавляем сообщения об ошибках для каждой ошибки формы
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
     else:
         form = QuoteForm()
     
     return render(request, 'quotes/add_quote.html', {'form': form})
 
-
 def add_source(request):
     """Добавление нового источника"""
+    sources = Source.objects.all().order_by('type', 'name')
+    
     if request.method == 'POST':
         form = SourceForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Источник успешно добавлен!')
             return redirect('add_quote')
+        else:
+            # Добавляем сообщения об ошибках для каждой ошибки формы
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
     else:
         form = SourceForm()
     
-    return render(request, 'quotes/add_source.html', {'form': form})
+    return render(request, 'quotes/add_source.html', {
+        'form': form,
+        'sources': sources
+    })
 
 
 def popular_quotes(request):
