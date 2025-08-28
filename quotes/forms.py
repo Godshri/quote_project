@@ -50,12 +50,28 @@ class QuoteForm(forms.ModelForm):
             'weight': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Добавляем пустой выбор для источника
+        self.fields['source'].empty_label = "--- Выберите источник ---"
+        self.fields['source'].required = True  # Делаем обязательным в форме
+
+    def clean_source(self):
+        source = self.cleaned_data.get('source')
+        if not source:
+            raise forms.ValidationError('Пожалуйста, выберите источник')
+        return source
+
     def clean(self):
         cleaned_data = super().clean()
         text = cleaned_data.get('text')
         source = cleaned_data.get('source')
         
-        if text and source:
+        # Если источник не выбран, останавливаем дальнейшие проверки
+        if not source:
+            return cleaned_data
+        
+        if text:
             # Проверка уникальности цитаты
             existing_quotes = Quote.objects.filter(text=text, source=source)
             if self.instance and self.instance.pk:
@@ -65,8 +81,12 @@ class QuoteForm(forms.ModelForm):
                 self.add_error('text', 'Цитата с таким текстом уже существует для этого источника')
             
             # Проверка ограничения на количество цитат
-            if source and source.quote_set.count() >= 3:
-                if not self.instance or not self.instance.pk:  # только для новых объектов
-                    self.add_error('source', 'У одного источника не может быть больше 3 цитат')
+            if source.pk:
+                quote_count = Quote.objects.filter(source=source).count()
+                if self.instance and self.instance.pk:
+                    quote_count = Quote.objects.filter(source=source).exclude(pk=self.instance.pk).count()
+                
+                if quote_count >= 3:
+                    self.add_error('source', f'У источника "{source}" уже есть 3 цитаты. Нельзя добавить больше.')
         
         return cleaned_data
