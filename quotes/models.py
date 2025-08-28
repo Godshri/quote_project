@@ -34,8 +34,7 @@ class Source(models.Model):
 
 class Quote(models.Model):
     text = models.TextField(verbose_name="Текст цитаты")
-    source = models.ForeignKey(Source, on_delete=models.CASCADE, verbose_name="Источник", 
-                              null=True, blank=True)  # Добавьте это
+    source = models.ForeignKey(Source, on_delete=models.CASCADE, verbose_name="Источник")
     weight = models.PositiveIntegerField(default=1, verbose_name="Вес")
     views = models.PositiveIntegerField(default=0, verbose_name="Просмотры")
     likes = models.PositiveIntegerField(default=0, verbose_name="Лайки")
@@ -47,26 +46,14 @@ class Quote(models.Model):
         unique_together = ['text', 'source']
     
     def __str__(self):
-        source_name = self.source.name if self.source else "Без источника"
-        return f"{self.text[:50]}... ({source_name})"
+        return f"{self.text[:50]}... ({self.source})"
     
     def clean(self):
-        # Если источник не указан, пропускаем проверки
-        if not self.source:
-            return
-            
         # Проверяем уникальность цитаты для источника
         if Quote.objects.filter(text=self.text, source=self.source).exclude(pk=self.pk).exists():
-            raise ValidationError('Цитата с таким текстом уже существует')
+            raise ValidationError('Цитата с таким текстом уже существует для этого источника')
         
         # Проверяем ограничение на количество цитат у источника
-        if self.source.pk:
-            quote_count = Quote.objects.filter(source=self.source).count()
-            if not self.pk:  # только для новых объектов
-                if quote_count >= 3:
-                    raise ValidationError('У одного источника не может быть больше 3 цитат')
-            else:
-                # Для существующих объектов исключаем текущую цитату из подсчета
-                quote_count = Quote.objects.filter(source=self.source).exclude(pk=self.pk).count()
-                if quote_count >= 3:
-                    raise ValidationError('У одного источника не может быть больше 3 цитат')
+        if not self.pk:  # только для новых объектов
+            if self.source.quote_set.count() >= 3:
+                raise ValidationError('У одного источника не может быть больше 3 цитат')

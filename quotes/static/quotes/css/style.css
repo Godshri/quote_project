@@ -80,7 +80,7 @@ a:hover {
 }
 
 .nav-container {
-    max-width: 1200px;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 0 20px;
     display: flex;
@@ -92,7 +92,7 @@ a:hover {
 .navbar-brand {
     color: var(--color-primary-dark);
     font-weight: 700;
-    font-size: 1.8rem;
+    font-size: 2rem;
     display: flex;
     align-items: center;
     font-family: var(--font-primary);
@@ -127,7 +127,7 @@ a:hover {
     display: flex;
     align-items: center;
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 1.5rem;
 }
 
 .nav-link i {
@@ -148,7 +148,7 @@ a:hover {
 
 /* ===== КОНТЕЙНЕРЫ И КАРТОЧКИ ===== */
 .container {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -166,7 +166,7 @@ a:hover {
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-card);
     width: 100%;
-    max-width: 800px;
+    max-width: 1700px;
     overflow: hidden;
     transition: var(--transition);
     margin-bottom: 2rem;
@@ -327,6 +327,22 @@ textarea.form-control {
     justify-content: center;
     margin-top: 2rem;
     flex-wrap: wrap;
+}
+
+.form-group .form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.form-control[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.form-control[type="number"]::-webkit-outer-spin-button,
+.form-control[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* ===== КНОПКИ ===== */
@@ -678,4 +694,22 @@ textarea.form-control {
     background-color: var(--color-primary-ultralight);
     border-radius: 8px;
     border: 1px solid var(--color-border);
+}
+
+.messages-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1000;
+    min-width: 300px;
+}
+
+.alert {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: none;
+    border-radius: 8px;
+}
+
+.btn-close {
+    padding: 0.75rem;
 }

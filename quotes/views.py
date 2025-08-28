@@ -152,18 +152,18 @@ def add_quote(request):
                 return redirect('random_quote')
             except ValidationError as e:
                 # Обрабатываем ошибки валидации модели
-                messages.error(request, f'Ошибка валидации: {e}')
+                for error in e.messages:
+                    messages.error(request, error)
             except Exception as e:
-                # Обрабатываем другие ошибки
                 messages.error(request, f'Ошибка при сохранении: {str(e)}')
         else:
-            # Показываем все ошибки формы
+            # Показываем все ошибки формы пользователю
             for field, errors in form.errors.items():
                 for error in errors:
                     if field == '__all__':
                         messages.error(request, error)
                     else:
-                        field_name = dict(QuoteForm.base_fields).get(field, field)
+                        field_name = form.fields[field].label if field in form.fields else field
                         messages.error(request, f'{field_name}: {error}')
     else:
         form = QuoteForm()

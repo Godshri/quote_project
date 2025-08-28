@@ -45,16 +45,29 @@ class QuoteForm(forms.ModelForm):
         model = Quote
         fields = ['text', 'source', 'weight']
         widgets = {
-            'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'source': forms.Select(attrs={'class': 'form-control'}),
-            'weight': forms.NumberInput(attrs={'class': 'form-control'}),
+            'text': forms.Textarea(attrs={
+                'class': 'form-control', 
+                'rows': 3,
+                'placeholder': 'Введите текст цитаты...'
+            }),
+            'source': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'weight': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '1',
+                'max': '1000',
+                'step': '1',
+                'value': '10'
+            }),
         }
-
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Добавляем пустой выбор для источника
         self.fields['source'].empty_label = "--- Выберите источник ---"
-        self.fields['source'].required = True  # Делаем обязательным в форме
+        self.fields['source'].required = True
+        # Устанавливаем подсказку для поля weight
+        self.fields['weight'].help_text = 'Чем выше вес, тем чаще цитата будет показываться'
 
     def clean_source(self):
         source = self.cleaned_data.get('source')
@@ -66,27 +79,28 @@ class QuoteForm(forms.ModelForm):
         cleaned_data = super().clean()
         text = cleaned_data.get('text')
         source = cleaned_data.get('source')
-        
+
         # Если источник не выбран, останавливаем дальнейшие проверки
         if not source:
             return cleaned_data
-        
+
         if text:
             # Проверка уникальности цитаты
             existing_quotes = Quote.objects.filter(text=text, source=source)
             if self.instance and self.instance.pk:
                 existing_quotes = existing_quotes.exclude(pk=self.instance.pk)
-            
+
             if existing_quotes.exists():
                 self.add_error('text', 'Цитата с таким текстом уже существует для этого источника')
-            
-            # Проверка ограничения на количество цитат
-            if source.pk:
+
+            # Проверка ограничения на количество цитат (только если источник уже сохранен в БД)
+            if source.pk:  # только для существующих источников
                 quote_count = Quote.objects.filter(source=source).count()
                 if self.instance and self.instance.pk:
+                    # Если редактируем существующую цитату, исключаем её из подсчета
                     quote_count = Quote.objects.filter(source=source).exclude(pk=self.instance.pk).count()
-                
+
                 if quote_count >= 3:
                     self.add_error('source', f'У источника "{source}" уже есть 3 цитаты. Нельзя добавить больше.')
-        
+
         return cleaned_data
