@@ -7,7 +7,17 @@
             <h2><i class="fas fa-plus-circle"></i> Добавить новую цитату</h2>
             <p class="mb-0">Поделитесь вдохновляющими словами с миром</p>
         </div>
-        
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show">
+                    <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
         <div class="card-body">
             <form method="post" class="quote-form">
                 {% csrf_token %}

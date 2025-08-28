@@ -147,17 +147,35 @@ def add_quote(request):
         form = QuoteForm(request.POST)
         if form.is_valid():
             try:
-                quote = form.save()
+                # Сохраняем форму, но не коммитим в БД сразу
+                quote = form.save(commit=False)
+                
+                # Проверяем, что источник существует
+                if not quote.source or not quote.source.pk:
+                    messages.error(request, 'Ошибка: источник не выбран или не существует')
+                    return render(request, 'quotes/add_quote.html', {'form': form})
+                
+                # Дополнительная проверка ограничения на количество цитат
+                if quote.source.quote_set.count() >= 3:
+                    messages.error(request, f'У источника "{quote.source}" уже есть 3 цитаты. Нельзя добавить больше.')
+                    return render(request, 'quotes/add_quote.html', {'form': form})
+                
+                # Проверяем уникальность цитаты
+                if Quote.objects.filter(text=quote.text, source=quote.source).exists():
+                    messages.error(request, 'Цитата с таким текстом уже существует для этого источника')
+                    return render(request, 'quotes/add_quote.html', {'form': form})
+                
+                # Сохраняем цитату
+                quote.save()
                 messages.success(request, 'Цитата успешно добавлена!')
                 return redirect('random_quote')
+                
             except ValidationError as e:
-                # Обрабатываем ошибки валидации модели
-                for error in e.messages:
-                    messages.error(request, error)
+                messages.error(request, f'Ошибка валидации: {e}')
             except Exception as e:
                 messages.error(request, f'Ошибка при сохранении: {str(e)}')
         else:
-            # Показываем все ошибки формы пользователю
+            # Показываем все ошибки формы
             for field, errors in form.errors.items():
                 for error in errors:
                     if field == '__all__':
