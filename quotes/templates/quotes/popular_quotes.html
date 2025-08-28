@@ -24,12 +24,12 @@
                 <div class="quote-stats">
                     <div class="stat-grid">
                         <div class="stat-item">
-                            <span class="stat-icon">👍</span>
+                            <span class="stat-icon"><i class="fas fa-thumbs-up"></i></span>
                             <span class="stat-value">{{ quote.likes }}</span>
                             <span class="stat-label">Лайков</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-icon">👎</span>
+                            <span class="stat-icon"><i class="fas fa-thumbs-down"></i></span>
                             <span class="stat-value">{{ quote.dislikes }}</span>
                             <span class="stat-label">Дизлайков</span>
                         </div>
@@ -40,7 +40,13 @@
                         </div>
                         <div class="stat-item">
                             <span class="stat-icon"><i class="fas fa-chart-line"></i></span>
-                            <span class="stat-value">{{ quote.likes|add:quote.dislikes|default:0 }}</span>
+                            <span class="stat-value">{% with total_votes=quote.likes|add:quote.dislikes %}
+                                    {% if total_votes > 0 %}
+                                        {% widthratio quote.likes total_votes 100 %}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                {% endwith %}</span>
                             <span class="stat-label">Рейтинг</span>
                         </div>
                     </div>

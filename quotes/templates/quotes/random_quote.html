@@ -14,10 +14,10 @@
                 
                 <div class="rating-buttons mt-4">  
                     <button onclick="rateQuote({{ quote.id }}, 'like')" class="btn btn-success">
-                        👍 <span id="likes-{{ quote.id }}">{{ quote.likes }}</span>
+                        <i class="fas fa-thumbs-up"></i>  <span id="likes-{{ quote.id }}">{{ quote.likes }}</span>
                     </button>
                     <button onclick="rateQuote({{ quote.id }}, 'dislike')" class="btn btn-danger">
-                        👎 <span id="dislikes-{{ quote.id }}">{{ quote.dislikes }}</span>
+                        <i class="fas fa-thumbs-down"></i> <span id="dislikes-{{ quote.id }}">{{ quote.dislikes }}</span>
                     </button>
                 </div>
                 

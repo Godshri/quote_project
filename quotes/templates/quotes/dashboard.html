@@ -18,7 +18,6 @@
                         <h3>{{ stats.total_quotes }}</h3>
                         <p>Всего цитат</p>
                     </div>
-                    <div class="stats-badge">📊</div>
                 </div>
 
                 <div class="stat-card stat-card-success">
@@ -29,7 +28,6 @@
                         <h3>{{ stats.total_sources }}</h3>
                         <p>Всего источников</p>
                     </div>
-                    <div class="stats-badge">📚</div>
                 </div>
 
                 <div class="stat-card stat-card-info">
@@ -40,7 +38,6 @@
                         <h3>{{ stats.total_views }}</h3>
                         <p>Всего просмотров</p>
                     </div>
-                    <div class="stats-badge">👀</div>
                 </div>
 
                 <div class="stat-card stat-card-warning">
@@ -51,7 +48,6 @@
                         <h3>{{ stats.total_likes }}</h3>
                         <p>Всего лайков</p>
                     </div>
-                    <div class="stats-badge">❤️</div>
                 </div>
             </div>
 
@@ -59,7 +55,12 @@
             <div class="popular-quote fade-in" style="animation-delay: 0.3s">
                 <div class="section-header">
                     <h3><i class="fas fa-crown"></i> Самая популярная цитата</h3>
-                    <div class="trophy-badge">🏆</div>
+                    {% if stats.most_popular.rating %}
+                    <span class="rating-badge">
+                        <i class="fas fa-star"></i>
+                        Рейтинг: {{ stats.most_popular.rating|floatformat:1 }}
+                    </span>
+                    {% endif %}
                 </div>
                 
                 <div class="quote-item featured">
@@ -71,17 +72,23 @@
                         <div class="quote-source">
                             <i class="fas fa-book"></i>
                             {{ stats.most_popular.source }}
+                            {% if stats.most_popular.author %}
+                            <span class="quote-author">
+                                <i class="fas fa-user"></i>
+                                {{ stats.most_popular.author }}
+                            </span>
+                            {% endif %}
                         </div>
                     </div>
                     
                     <div class="quote-stats">
                         <div class="stats-mini-grid">
                             <div class="stats-mini">
-                                <span class="stats-mini-icon">👍</span>
+                                <span class="stats-mini-icon"><i class="fas fa-thumbs-up"></i></span>
                                 <span class="stats-mini-value">{{ stats.most_popular.likes }}</span>
                             </div>
                             <div class="stats-mini">
-                                <span class="stats-mini-icon">👎</span>
+                                <span class="stats-mini-icon"><i class="fas fa-thumbs-down"></i></span>
                                 <span class="stats-mini-value">{{ stats.most_popular.dislikes }}</span>
                             </div>
                             <div class="stats-mini">
@@ -90,19 +97,31 @@
                             </div>
                             <div class="stats-mini">
                                 <span class="stats-mini-icon"><i class="fas fa-star"></i></span>
-                                <span class="stats-mini-value">{{ stats.most_popular.likes|add:stats.most_popular.dislikes }}</span>
+                                <span class="stats-mini-value">
+                                    {% if stats.most_popular.likes or stats.most_popular.dislikes %}
+                                        {% widthratio stats.most_popular.likes stats.most_popular.likes|add:stats.most_popular.dislikes 100 %}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </span>
                             </div>
                         </div>
                     </div>
                     
                     <div class="featured-badge">
-                        <i class="fas fa-fire"></i>
-                        Лидер рейтинга
+                        <i class="fas fa-trophy"></i>
+                        Самая популярная
                     </div>
                 </div>
+            </div>
+            {% else %}
+            <div class="no-quotes">
+                <i class="fas fa-chart-line"></i>
+                <h3>Пока нет данных о популярности</h3>
+                <p>Добавьте цитаты и получите первую статистику!</p>
             </div>
             {% endif %}
         </div>
     </div>
 </div>
-{% endblock%}
+{% endblock %}
