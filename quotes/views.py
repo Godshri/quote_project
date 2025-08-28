@@ -12,34 +12,45 @@ from .forms import QuoteForm, SourceForm
 
 
 def random_quote(request):
-    """Получение случайной цитаты с учетом веса"""
-    total_weight = Quote.objects.aggregate(total=Sum('weight'))['total'] or 0
+    """Получение случайной цитаты с учетом веса - усиленная версия"""
+    # Получаем все цитаты с их весами
+    quotes = list(Quote.objects.values('id', 'weight'))
     
-    if total_weight <= 0:
+    if not quotes:
         selected_quote = None
     else:
-        # Оптимизированный выбор случайной цитаты
-        random_weight = random.uniform(0, total_weight)
-        
-        # Используем агрегацию в БД для более эффективного поиска
-        cumulative_weight = 0
-        quotes = Quote.objects.values('id', 'weight').order_by('-weight')
+        # Усиливаем влияние веса - возводим в степень
+        weighted_quotes = []
+        total_weight = 0
         
         for quote in quotes:
-            cumulative_weight += quote['weight']
-            if cumulative_weight >= random_weight:
-                selected_quote = Quote.objects.get(id=quote['id'])
-                break
-        else:
-            # Если цитата не найдена, берем случайную
+            # Усиливаем вес: weight^1.5 для большего разброса
+            enhanced_weight = quote['weight'] ** 1.5
+            weighted_quotes.append({
+                'id': quote['id'],
+                'weight': enhanced_weight
+            })
+            total_weight += enhanced_weight
+        
+        if total_weight <= 0:
             selected_quote = Quote.objects.order_by('?').first()
+        else:
+            # Выбор с учетом усиленного веса
+            random_weight = random.uniform(0, total_weight)
+            cumulative_weight = 0
+            
+            for quote in weighted_quotes:
+                cumulative_weight += quote['weight']
+                if cumulative_weight >= random_weight:
+                    selected_quote = Quote.objects.get(id=quote['id'])
+                    break
+            else:
+                selected_quote = Quote.objects.order_by('?').first()
     
     if selected_quote:
-        # Оптимизированное обновление счетчика просмотров
         Quote.objects.filter(id=selected_quote.id).update(views=F('views') + 1)
         selected_quote.refresh_from_db()
         
-        # Сохраняем информацию о просмотре в сессии
         viewed_quotes = request.session.setdefault('viewed_quotes', {})
         viewed_quotes[str(selected_quote.id)] = {
             'can_vote': True,
@@ -51,7 +62,6 @@ def random_quote(request):
         'quote': selected_quote,
         'total_quotes': Quote.objects.count()
     })
-
 
 def can_user_vote(request, quote_id):
     """Проверяет, может ли пользователь голосовать за цитату"""
